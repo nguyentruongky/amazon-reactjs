@@ -14,12 +14,14 @@ function Home() {
 
                 <div className="home__row">
                     <Product
+                        id="1"
                         title="The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses"
                         price={19.99}
                         image="https://images-na.ssl-images-amazon.com/images/I/51T-sMqSMiL._SX329_BO1,204,203,200_.jpg"
                         rating={3}
                     />
                     <Product
+                        id="2"
                         title="HP Chromebook 11-inch Laptop - Up to 15 Hour Battery Life - MediaTek - MT8183 - 4 GB RAM - 32 GB eMMC Storage - 11.6-inch HD Display - with Chrome OS - (11a-na0021nr, 2020 Model, Snow White)"
                         image="https://m.media-amazon.com/images/I/81EY2GIfktL._AC_UY436_FMwebp_QL65_.jpg"
                         price={539}
@@ -29,18 +31,21 @@ function Home() {
 
                 <div className="home__row">
                     <Product
+                        id="1"
                         title="The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses"
                         price={19.99}
                         image="https://images-na.ssl-images-amazon.com/images/I/51T-sMqSMiL._SX329_BO1,204,203,200_.jpg"
                         rating={3}
                     />
                     <Product
+                        id="2"
                         title="HP Chromebook 11-inch Laptop - Up to 15 Hour Battery Life - MediaTek - MT8183 - 4 GB RAM - 32 GB eMMC Storage - 11.6-inch HD Display - with Chrome OS - (11a-na0021nr, 2020 Model, Snow White)"
                         image="https://m.media-amazon.com/images/I/81EY2GIfktL._AC_UY436_FMwebp_QL65_.jpg"
                         price={539}
                         rating={4}
                     />
                     <Product
+                        id="1"
                         title="The Lean Startup: How Today's Entrepreneurs Use Continuous Innovation to Create Radically Successful Businesses"
                         price={19.99}
                         image="https://images-na.ssl-images-amazon.com/images/I/51T-sMqSMiL._SX329_BO1,204,203,200_.jpg"
@@ -50,6 +55,7 @@ function Home() {
 
                 <div className="home__row">
                     <Product
+                        id="2"
                         title="HP Chromebook 11-inch Laptop - Up to 15 Hour Battery Life - MediaTek - MT8183 - 4 GB RAM - 32 GB eMMC Storage - 11.6-inch HD Display - with Chrome OS - (11a-na0021nr, 2020 Model, Snow White)"
                         image="https://m.media-amazon.com/images/I/81EY2GIfktL._AC_UY436_FMwebp_QL65_.jpg"
                         price={539}
