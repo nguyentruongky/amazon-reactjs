@@ -8,6 +8,7 @@ import CurrencyFormat from 'react-currency-format'
 import { getBasketTotal } from './reducer'
 import axios from './axios'
 import { useHistory } from 'react-router'
+import { db } from './firebase'
 
 function Payment() {
     const history = useHistory()
@@ -48,10 +49,24 @@ function Payment() {
                 },
             })
             .then(({ paymentIntent }) => {
+                console.log('paymentIntentn is >>>>>', paymentIntent)
+                db.collection('users')
+                    .doc(user?.uid)
+                    .collection('orders')
+                    .doc(paymentIntent.id)
+                    .set({
+                        basket: basket,
+                        amount: paymentIntent.amount,
+                        created: paymentIntent.created,
+                    })
+
                 setSucceded(true)
                 setError(null)
                 setProcessing(false)
 
+                dispatch({
+                    type: 'EMPTY_BASKET',
+                })
                 history.replace('/orders')
             })
     }
@@ -103,7 +118,9 @@ function Payment() {
                             <div className="payment__priceContainer">
                                 <CurrencyFormat
                                     renderText={(value) => (
-                                        <h3>Order Total: {value}</h3>
+                                        <h3 className="payment__total">
+                                            Order Total: {value}
+                                        </h3>
                                     )}
                                     decimalScale={2}
                                     value={getBasketTotal(basket)}
