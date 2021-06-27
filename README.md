@@ -3,6 +3,9 @@
 ## Demo
 https://user-images.githubusercontent.com/4979497/123529362-9a6e3480-d719-11eb-8bde-cc6798bc350c.mp4
 
+## How to run 
+- Open terminal and run `yarn start`
+- Open another terminal in `functions` and run `npm run serve`
 
 ## Technique
 - ReactJS
