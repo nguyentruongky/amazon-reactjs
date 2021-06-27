@@ -10,7 +10,8 @@ https://user-images.githubusercontent.com/4979497/123529362-9a6e3480-d719-11eb-8
 - Firebase (Auth, Firestore, Cloud Function)
 - Stripe
 
-  - Stripe on client 
+ • Stripe on client 
+ 
 ```
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
 
@@ -65,7 +66,9 @@ const handleSubmit = async (event) => {
         })
 }
 ```
-    - Stripe on Cloud function (backend)
+
+• Stripe on server 
+
 ```
 // prettier-ignore
 const functions = require("firebase-functions")
