@@ -1,70 +1,118 @@
-# Getting Started with Create React App
+# Create simple Amazon clone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Demo
+https://user-images.githubusercontent.com/4979497/123529362-9a6e3480-d719-11eb-8bde-cc6798bc350c.mp4
 
-## Available Scripts
 
-In the project directory, you can run:
+## Technique
+- ReactJS
+- React Context API
+- Firebase (Auth, Firestore, Cloud Function)
+- Stripe
 
-### `yarn start`
+  - Stripe on client 
+```
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js'
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const [{ basket, user }, dispatch] = useStateValue()
+const [clientSecret, setClientSecret] = useState(true)
+useEffect(() => {
+    const amount = parseInt(getBasketTotal(basket) * 100)
+    const getClientSecret = async () => {
+        const response = await axios({
+            method: 'post',
+            url: `/payments/create?total=${amount}`,
+        })
+        setClientSecret(response.data.clientSecret)
+    }
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    getClientSecret()
+}, [basket])
 
-### `yarn test`
+const stripe = useStripe()
+const elements = useElements()
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+const handleSubmit = async (event) => {
+    event.preventDefault()
+    setProcessing(true)
 
-### `yarn build`
+    const payload = await stripe
+        .confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: elements.getElement(CardElement),
+            },
+        })
+        .then(({ paymentIntent }) => {
+            console.log('paymentIntentn is >>>>>', paymentIntent)
+            db.collection('users')
+                .doc(user?.uid)
+                .collection('orders')
+                .doc(paymentIntent.id)
+                .set({
+                    basket: basket,
+                    amount: paymentIntent.amount,
+                    created: paymentIntent.created,
+                })
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+            setSucceded(true)
+            setError(null)
+            setProcessing(false)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+            dispatch({
+                type: 'EMPTY_BASKET',
+            })
+            history.replace('/orders')
+        })
+}
+```
+    - Stripe on Cloud function (backend)
+```
+// prettier-ignore
+const functions = require("firebase-functions")
+// prettier-ignore
+const express = require("express")
+// prettier-ignore
+const cors = require("cors")
+// prettier-ignore
+const stripe = require("stripe")("sk_test_gUlPGbe57OnirEOH8xb6wHiS00VjQexdTh")
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+// App config
+const app = express()
 
-### `yarn eject`
+// Middlewares
+app.use(cors({ origin: true }))
+app.use(express.json())
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+// API routes
+// prettier-ignore
+app.get("/", (req, res) => {
+    // prettier-ignore
+    res.status(200).send("Hello testing")
+})
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+// prettier-ignore
+app.post("/payments/create", (req, res) => {
+    const total = req.query.total
+    stripe.paymentIntents
+        .create({
+            amount: total,
+            // prettier-ignore
+            currency: "usd",
+        })
+        .then((paymentIntent) => {
+            res.status(201).send({
+                clientSecret: paymentIntent.client_secret,
+            })
+        })
+})
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+// Listener
+exports.api = functions.https.onRequest(app)
+// API URL: http://localhost:5001/clone-7dbdc/us-central1/api
+```
+  Notes: `// prettier-ignore` prevents conflicts linting between local and Firebase Cloud Function.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Deploy 
+- Run `npm run build`
+- run `firebase deploy`
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
